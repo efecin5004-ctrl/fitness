@@ -304,19 +304,6 @@
 
   .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
 
-  /* ── SETUP STEPS ── */
-  .setup-step {
-    display: flex; align-items: flex-start; gap: 8px;
-    font-size: 12px; color: var(--text2); line-height: 1.5;
-  }
-  .step-num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: var(--accent-dim); border: 1px solid var(--accent-dim2);
-    color: var(--accent); font-size: 10px; font-weight: 800;
-    flex-shrink: 0; margin-top: 1px;
-  }
-
   /* ── AI CARD ── */
   .ai-card { border-color: rgba(212,255,76,.15); }
   .ai-spinner {
@@ -399,7 +386,6 @@
 <body>
 
 <div class="app-wrapper">
-  <!-- SIDEBAR -->
   <nav class="sidebar">
     <div class="logo">
       <h1>EKTO</h1>
@@ -431,17 +417,14 @@
     </div>
   </nav>
 
-  <!-- MAIN -->
   <main class="main">
 
-    <!-- ═══ PANEL ═══ -->
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <h2>Hoş geldin 💪</h2>
         <p id="today-label">Bugün: —</p>
       </div>
 
-      <!-- Program başlatılmadıysa -->
       <div id="no-program" class="card start-screen" style="display:none">
         <h2>Programa Başla</h2>
         <p>3 aylık ektomorf programına başlamak için bir başlangıç tarihi seç.<br>Tüm ilerleme otomatik kaydedilir.</p>
@@ -473,13 +456,11 @@
           </div>
         </div>
 
-        <!-- Bu haftanın günleri -->
         <div class="card" style="margin-bottom:20px">
           <div class="section-title">Bu Hafta</div>
           <div class="week-grid" id="this-week-grid"></div>
         </div>
 
-        <!-- Bugünün antrenmanı -->
         <div class="card" id="today-workout-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
             <div class="section-title" style="margin-bottom:0">Bugünün Antrenmanı</div>
@@ -490,7 +471,6 @@
       </div>
     </div>
 
-    <!-- ═══ 3 AY TAKVİM ═══ -->
     <div class="page" id="page-takvim">
       <div class="page-header">
         <h2>3 Aylık Takvim</h2>
@@ -499,7 +479,6 @@
       <div class="months-grid" id="months-grid"></div>
     </div>
 
-    <!-- ═══ ANTRENMAN LOGU ═══ -->
     <div class="page" id="page-antrenman">
       <div class="page-header">
         <h2>Antrenman Logu</h2>
@@ -524,14 +503,12 @@
       </div>
     </div>
 
-    <!-- ═══ ÖĞÜN TAKİBİ ═══ -->
     <div class="page" id="page-ogun">
       <div class="page-header">
         <h2>Öğün Takibi</h2>
         <p>Günlük öğünlerini işaretle veya yediğin herhangi bir şeyi AI ile hesapla.</p>
       </div>
 
-      <!-- Üst satır: ring + makrolar -->
       <div class="grid-2" style="margin-bottom:16px">
         <div class="card" style="text-align:center">
           <div class="calories-ring">
@@ -562,7 +539,6 @@
         </div>
       </div>
 
-      <!-- AI KALORİ ASISTANI -->
       <div class="card ai-card" style="margin-bottom:16px">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
           <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-dim);border:1px solid var(--accent-dim2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🤖</div>
@@ -571,27 +547,10 @@
             <div style="font-size:11px;color:var(--text3)">Ne yediğini yaz, makroları otomatik hesaplar</div>
           </div>
           <div style="margin-left:auto">
-            <div id="ai-api-dot" style="width:8px;height:8px;border-radius:50%;background:var(--text3)" title="API bağlantısı"></div>
+            <div id="ai-api-dot" style="width:8px;height:8px;border-radius:50%;background:var(--green)" title="Groq bağlı ✓"></div>
           </div>
         </div>
 
-        <!-- Gemini API Key kurulum -->
-        <div id="api-key-section" style="margin-bottom:12px;padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid rgba(212,255,76,.2)">
-          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px">🔑 Google Gemini API — Ücretsiz Kurulum</div>
-          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
-            <div class="setup-step"><span class="step-num">1</span><span>Google hesabınla <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:700">aistudio.google.com/apikey</a> adresine git</span></div>
-            <div class="setup-step"><span class="step-num">2</span><span><strong style="color:var(--text)">"Create API Key"</strong> butonuna tıkla</span></div>
-            <div class="setup-step"><span class="step-num">3</span><span>Oluşan anahtarı kopyala, buraya yapıştır</span></div>
-            <div class="setup-step" style="color:var(--text3);font-size:10px;padding-left:28px">✓ Tamamen ücretsiz &nbsp;·&nbsp; ✓ Kredi kartı yok &nbsp;·&nbsp; ✓ Günde 1500 istek</div>
-          </div>
-          <div style="display:flex;gap:8px">
-            <input type="password" id="api-key-input" placeholder="AIza..." style="flex:1;font-family:'Space Mono',monospace;font-size:12px" onkeydown="if(event.key==='Enter')saveApiKey()">
-            <button class="btn btn-accent btn-sm" onclick="saveApiKey()">Bağla ✦</button>
-          </div>
-          <div style="font-size:10px;color:var(--text3);margin-top:8px">🔒 Anahtar sadece bu cihazda kalır, internete gönderilmez.</div>
-        </div>
-
-        <!-- Yemek sorgu alanı -->
         <div style="display:flex;gap:8px;margin-bottom:10px">
           <input type="text" id="ai-food-input"
             placeholder="Örn: 3 dilim lahmacun, 1 büyük ayran, 2 köfte..."
@@ -602,7 +561,6 @@
           </button>
         </div>
 
-        <!-- AI cevabı -->
         <div id="ai-response-area" style="display:none">
           <div id="ai-loading" style="display:none;text-align:center;padding:16px;color:var(--text3);font-size:13px">
             <div class="ai-spinner"></div>
@@ -620,7 +578,6 @@
           <div id="ai-error" style="display:none;font-size:12px;color:var(--red);padding:10px;background:var(--red-dim);border-radius:var(--radius-sm)"></div>
         </div>
 
-        <!-- Hızlı şablonlar -->
         <div style="margin-top:10px">
           <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Hızlı Sorgular</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -636,18 +593,15 @@
         </div>
       </div>
 
-      <!-- Ekstra yemekler listesi -->
       <div id="extra-foods-section" style="display:none;margin-bottom:16px">
         <div class="section-title">Ekstra Yediklerin</div>
         <div id="extra-foods-list" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
 
-      <!-- Standart öğünler -->
       <div class="section-title">Program Öğünleri</div>
       <div class="meal-tracker-grid" id="meal-tracker"></div>
     </div>
 
-    <!-- ═══ İLERLEME ═══ -->
     <div class="page" id="page-ilerleme">
       <div class="page-header">
         <h2>İlerleme</h2>
@@ -680,7 +634,6 @@
       </div>
     </div>
 
-    <!-- ═══ NOTLAR ═══ -->
     <div class="page" id="page-notlar">
       <div class="page-header">
         <h2>Notlar</h2>
@@ -711,7 +664,6 @@
   </main>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="day-modal" onclick="closeModal(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeDayModal()">×</button>
@@ -722,7 +674,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- MOBİL ALT NAVİGASYON -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bnav-btn active" onclick="goPage('dashboard')" id="bnav-dashboard">
@@ -825,15 +776,6 @@ function loadState() {
   if (!state.meals) state.meals = {};
   if (!state.extraFoods) state.extraFoods = {};
   if (!state.notes) state.notes = [];
-
-  // Gemini key yükleme
-  const savedKey = localStorage.getItem('ekto_gemini_key');
-  if (savedKey) {
-    document.getElementById('api-key-input').value = savedKey;
-    document.getElementById('api-key-section').style.display = 'none';
-    document.getElementById('ai-api-dot').style.background = 'var(--green)';
-    document.getElementById('ai-api-dot').title = 'Gemini bağlı ✓';
-  }
 }
 
 function saveState() {
@@ -1418,15 +1360,6 @@ function toggleMeal(idx, s) {
 // ═══════════════════════════════════════
 // AI KALORİ ASISTANI — Google Gemini
 // ═══════════════════════════════════════
-function saveApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (!key || key.length < 10) { showToast('⚠️ Geçerli bir API anahtarı gir!'); return; }
-  localStorage.setItem('ekto_gemini_key', key);
-  document.getElementById('api-key-section').style.display = 'none';
-  document.getElementById('ai-api-dot').style.background = 'var(--green)';
-  document.getElementById('ai-api-dot').title = 'Gemini bağlı ✓';
-  showToast('🟢 Gemini bağlandı! Artık kullanabilirsin.');
-}
 
 function quickQuery(text) {
   document.getElementById('ai-food-input').value = text;
@@ -1434,13 +1367,8 @@ function quickQuery(text) {
 }
 
 async function askAI() {
-  const apiKey = localStorage.getItem('ekto_gemini_key');
-  if (!apiKey) {
-    document.getElementById('api-key-section').style.display = 'block';
-    document.getElementById('api-key-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    showToast('⚠️ Önce Gemini API anahtarını bağla!');
-    return;
-  }
+  // Direkt API Key Entegre Edildi
+  const apiKey = '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';
 
   const query = document.getElementById('ai-food-input').value.trim();
   if (!query) { showToast('⚠️ Ne yediğini yaz!'); return; }
@@ -1458,45 +1386,46 @@ async function askAI() {
   btn.disabled = true;
   document.getElementById('ai-btn-text').textContent = '...';
 
-  const prompt = `Sen bir Türk spor beslenmesi uzmanısın. Kullanıcı ne yediğini söyleyecek.
-Sadece ve sadece şu JSON formatında cevap ver, başka hiçbir şey yazma:
-{"name":"<ne yendi kısa>","kal":<toplam kalori tam sayı>,"pro":<protein gram tam sayı>,"kar":<karbonhidrat gram tam sayı>,"yag":<yag gram tam sayı>,"aciklama":"<1 cümle Türkçe kısa bilgi>"}
-
-Türk yemekleri için standart porsiyonları ve pişirme yöntemini dikkate al. Gerçekçi tahmin yap.
-Kullanıcı: "${query}"`;
-
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.1, maxOutputTokens: 300 }
-        })
-      }
-    );
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 300,
+        temperature: 0.1,
+        messages: [
+          {
+            role: 'system',
+            content: 'Sen bir Türk spor beslenmesi uzmanısın. Kullanıcı ne yediğini söyleyecek. Sadece ve sadece şu JSON formatında cevap ver, baska hicbir sey yazma, markdown kullanma: {"name":"<ne yendi kisa>","kal":<toplam kalori tam sayi>,"pro":<protein gram tam sayi>,"kar":<karbonhidrat gram tam sayi>,"yag":<yag gram tam sayi>,"aciklama":"<1 cumle Turkce kisa bilgi>"} Turk yemekleri icin standart porsiyonlari dikkate al. Gercekci tahmin yap. Sadece JSON dondur.'
+          },
+          { role: 'user', content: query }
+        ]
+      })
+    });
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
+      console.error('Groq API hatasi:', response.status, JSON.stringify(err));
       const msg = err.error?.message || '';
-      if (response.status === 400 && msg.includes('API_KEY')) throw new Error('API anahtarı geçersiz. Tekrar kontrol et.');
-      if (response.status === 429) throw new Error('Günlük limit doldu. Yarın tekrar dene (ücretsiz 1500/gün).');
+      if (response.status === 401) throw new Error('API anahtari gecersiz veya süresi dolmuş.');
+      if (response.status === 429) throw new Error('Dakika limiti asildi, 10 saniye bekle ve tekrar dene.');
       throw new Error('Hata ' + response.status + ': ' + (msg || 'Bilinmeyen hata'));
     }
 
     const data = await response.json();
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const raw = data.choices?.[0]?.message?.content || '';
     const jsonStr = raw.replace(/```json|```/g, '').trim();
 
     let food;
     try { food = JSON.parse(jsonStr); }
     catch(e) {
-      // JSON parse başarısız — regex ile dene
       const m = jsonStr.match(/\{[\s\S]*\}/);
       if (m) food = JSON.parse(m[0]);
-      else throw new Error('AI cevabı işlenemedi. Tekrar dene.');
+      else throw new Error('AI cevabi islenemedi. Tekrar dene.');
     }
 
     pendingAIFood = {
@@ -1508,12 +1437,7 @@ Kullanıcı: "${query}"`;
     };
 
     document.getElementById('ai-result-summary').textContent = food.aciklama || '';
-    document.getElementById('ai-result-macros').innerHTML = `
-      <span class="macro-tag m-kal">~${pendingAIFood.kal} kcal</span>
-      <span class="macro-tag m-pro">P: ${pendingAIFood.pro}g</span>
-      <span class="macro-tag m-kar">K: ${pendingAIFood.kar}g</span>
-      <span class="macro-tag m-yag">Y: ${pendingAIFood.yag}g</span>
-    `;
+    document.getElementById('ai-result-macros').innerHTML = '<span class="macro-tag m-kal">~' + pendingAIFood.kal + ' kcal</span><span class="macro-tag m-pro">P: ' + pendingAIFood.pro + 'g</span><span class="macro-tag m-kar">K: ' + pendingAIFood.kar + 'g</span><span class="macro-tag m-yag">Y: ' + pendingAIFood.yag + 'g</span>';
 
     loading.style.display = 'none';
     result.style.display = 'block';
@@ -1521,22 +1445,13 @@ Kullanıcı: "${query}"`;
   } catch(e) {
     loading.style.display = 'none';
     errorDiv.style.display = 'block';
-    errorDiv.innerHTML = '⚠️ ' + (e.message || 'Bilinmeyen hata.') +
-      '<br><span style="font-size:10px;opacity:.7;margin-top:4px;display:block">API anahtarını sıfırlamak için: <button onclick="resetApiKey()" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:10px;text-decoration:underline">Anahtarı sil</button></span>';
+    errorDiv.innerHTML = '⚠️ ' + (e.message || 'Bilinmeyen hata.');
   }
 
   btn.disabled = false;
   document.getElementById('ai-btn-text').textContent = 'Hesapla ✦';
 }
 
-function resetApiKey() {
-  localStorage.removeItem('ekto_gemini_key');
-  document.getElementById('api-key-section').style.display = 'block';
-  document.getElementById('api-key-input').value = '';
-  document.getElementById('ai-api-dot').style.background = 'var(--text3)';
-  clearAIResult();
-  showToast('🔑 Anahtar silindi, yenisini gir.');
-}
 
 function addAIFoodToDay() {
   if (!pendingAIFood) return;
