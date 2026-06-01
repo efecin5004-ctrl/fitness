@@ -304,23 +304,67 @@
 
   .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
 
+  /* ── MOBİL UYUM (RESPONSIVE) ── */
   @media (max-width: 900px) {
-    .sidebar { width: 60px; }
-    .sidebar .logo p, .sidebar .nav-btn span, .sidebar-footer .streak-badge .lbl { display: none; }
-    .logo h1 { font-size: 9px; }
-    .nav-btn { justify-content: center; padding: 14px; }
-    .nav-icon { width: auto; font-size: 18px; }
-    .main { margin-left: 60px; padding: 20px; }
     .months-grid { grid-template-columns: 1fr; }
     .stats-row { grid-template-columns: repeat(2,1fr); }
     .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .progress-header { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .app-wrapper { flex-direction: column; }
+    .sidebar { 
+      width: 100%; height: 65px; min-height: auto; 
+      position: fixed; bottom: 0; left: 0; top: auto; 
+      flex-direction: row; justify-content: space-around; 
+      padding: 0; border-right: none; border-top: 1px solid var(--border); 
+      background: rgba(17, 17, 17, 0.95); backdrop-filter: blur(10px); z-index: 999; 
+    }
+    .logo, .sidebar-footer { display: none; }
+    .nav-btn { 
+      flex: 1; justify-content: center; padding: 10px 0; border-bottom: none; 
+      flex-direction: column; gap: 4px; font-size: 10px; text-align: center;
+    }
+    .nav-btn span:not(.nav-icon) { display: block; font-size: 9px; }
+    .nav-icon { font-size: 20px; width: 100%; margin: 0 auto; }
+    .nav-btn.active { background: transparent; color: var(--accent); }
+    .nav-btn.active::before {
+      width: 100%; height: 3px; left: 0; top: 0; bottom: auto;
+      border-radius: 0 0 2px 2px;
+    }
+    
+    .main { margin-left: 0; margin-bottom: 65px; padding: 16px; }
+
+    .page-header h2 { font-size: 22px; }
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .stat-card { padding: 14px; }
+    .stat-card .val { font-size: 22px; }
+
+    .week-grid { gap: 4px; }
+    .day-pill { padding: 10px 4px; }
+    .day-pill .day-num { font-size: 14px; margin: 2px 0; }
+    .day-pill .day-name { font-size: 9px; }
+    .day-pill .workout-type { display: none; }
+
+    .set-labels { font-size: 9px; grid-template-columns: 24px 1fr 1fr 1fr 28px; gap: 4px; }
+    .set-row { gap: 4px; grid-template-columns: 24px 1fr 1fr 1fr 28px; }
+    .set-row input { padding: 6px; font-size: 12px; }
+    .set-check { width: 24px; height: 24px; font-size: 12px; }
+    .add-set-btn { margin-top: 10px; padding: 10px; }
+
+    .modal { width: 95vw; padding: 16px; }
+    .program-table { display: block; overflow-x: auto; white-space: nowrap; }
+    .date-display { font-size: 14px; min-width: 140px; }
+    
+    .calories-ring { margin: 0 auto 10px; }
   }
 </style>
 </head>
 <body>
 
 <div class="app-wrapper">
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR / BOTTOM NAV -->
   <nav class="sidebar">
     <div class="logo">
       <h1>EKTO</h1>
@@ -330,13 +374,13 @@
       <span class="nav-icon">📊</span><span>Panel</span>
     </button>
     <button class="nav-btn" onclick="goPage('takvim')" id="nav-takvim">
-      <span class="nav-icon">📅</span><span>3 Ay Takvim</span>
+      <span class="nav-icon">📅</span><span>Takvim</span>
     </button>
     <button class="nav-btn" onclick="goPage('antrenman')" id="nav-antrenman">
       <span class="nav-icon">🏋️</span><span>Antrenman</span>
     </button>
     <button class="nav-btn" onclick="goPage('ogun')" id="nav-ogun">
-      <span class="nav-icon">🍽️</span><span>Öğün Takibi</span>
+      <span class="nav-icon">🍽️</span><span>Öğün</span>
     </button>
     <button class="nav-btn" onclick="goPage('ilerleme')" id="nav-ilerleme">
       <span class="nav-icon">📈</span><span>İlerleme</span>
@@ -362,7 +406,6 @@
         <p id="today-label">Bugün: —</p>
       </div>
 
-      <!-- Program başlatılmadıysa -->
       <div id="no-program" class="card start-screen" style="display:none">
         <h2>Programa Başla</h2>
         <p>3 aylık ektomorf programına başlamak için bir başlangıç tarihi seç.<br>Tüm ilerleme otomatik kaydedilir.</p>
@@ -377,30 +420,28 @@
         <div class="stats-row">
           <div class="stat-card">
             <div class="val" id="stat-total-done" style="color:var(--accent)">0</div>
-            <div class="lbl">Tamamlanan Antrenman</div>
+            <div class="lbl">Tamamlanan</div>
           </div>
           <div class="stat-card">
             <div class="val" id="stat-progress">%0</div>
-            <div class="lbl">Program İlerlemesi</div>
+            <div class="lbl">İlerleme</div>
             <div style="margin-top:10px"><div class="progress-bar-wrap"><div class="progress-bar" id="main-progress-bar" style="width:0%"></div></div></div>
           </div>
           <div class="stat-card">
             <div class="val" id="stat-week">Hft 0</div>
-            <div class="lbl">Mevcut Hafta</div>
+            <div class="lbl">Hafta</div>
           </div>
           <div class="stat-card">
             <div class="val" id="stat-days-left" style="color:var(--text2)">—</div>
-            <div class="lbl">Kalan Gün</div>
+            <div class="lbl">Kalan</div>
           </div>
         </div>
 
-        <!-- Bu haftanın günleri -->
         <div class="card" style="margin-bottom:20px">
           <div class="section-title">Bu Hafta</div>
           <div class="week-grid" id="this-week-grid"></div>
         </div>
 
-        <!-- Bugünün antrenmanı -->
         <div class="card" id="today-workout-card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
             <div class="section-title" style="margin-bottom:0">Bugünün Antrenmanı</div>
@@ -433,7 +474,7 @@
           <button onclick="changeLogDate(1)">›</button>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-ghost btn-sm" onclick="markLogDone()">✓ Günü Tamamla</button>
+          <button class="btn btn-ghost btn-sm" onclick="markLogDone()">✓ Tamamla</button>
           <button class="btn btn-accent btn-sm" onclick="saveLog()">💾 Kaydet</button>
         </div>
       </div>
@@ -566,7 +607,7 @@ const PROGRAM = {
   totalDays: 84,
   workoutSchedule: [1,2,4,5], // 1=Pzt, 2=Sal, 4=Per, 5=Cum (0=Paz)
   days: [
-    null, // 0 index padding
+    null,
     // HAFTA 1-4 (Ay 1 - Temel)
     {name:'Göğüs & Triceps',tag:'push',type:'GÜN 1',ex:[
       {name:'Düz DB Bench Press',target:'4×10',muscle:'Göğüs'},
@@ -617,9 +658,9 @@ const WEEK_THEMES = [
 // STATE
 let state = {
   startDate: null,
-  completedDays: {},   // {dateStr: workoutTypeIndex}  — tamamlanan günler
-  logs: {},            // {dateStr: {exercises:[{sets:[{reps,weight,done}]}], note:''}}
-  meals: {},           // {dateStr: [bool×6]}
+  completedDays: {},
+  logs: {},
+  meals: {},
   notes: [],
   currentLogDate: null,
   currentLogDay: 1,
@@ -655,7 +696,7 @@ function addDays(d, n) {
   const r = new Date(d); r.setDate(r.getDate()+n); return r;
 }
 function dayOfWeek(d) {
-  return d.getDay(); // 0=Paz, 1=Pzt, ...
+  return d.getDay();
 }
 const DAY_NAMES = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
 const MONTH_NAMES = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
@@ -668,9 +709,8 @@ function getWorkoutTypeForDate(d) {
   if (diff < 0 || diff >= 84) return null;
   const dow = dayOfWeek(d);
   if (!PROGRAM.workoutSchedule.includes(dow)) return null;
-  // Hangi antrenman günü?
   const idx = PROGRAM.workoutSchedule.indexOf(dow);
-  return idx + 1; // 1–4
+  return idx + 1;
 }
 
 function getProgramDay(d) {
@@ -716,6 +756,9 @@ function goPage(page) {
   if (page === 'ogun') renderMealTracker();
   if (page === 'ilerleme') renderProgress();
   if (page === 'notlar') renderNotes();
+  
+  // Mobil görünümde menüye basınca sayfayı en yukarı kaydırsın
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // ═══════════════════════════════════════
@@ -752,7 +795,6 @@ function renderDashboard() {
   const diff = Math.floor((today - start) / 86400000);
   const currentWeek = Math.min(12, Math.floor(diff/7)+1);
 
-  // Kaç antrenman tamamlandı
   const totalWorkoutDays = Array.from({length:84},(_,i)=>{
     const d = addDays(start, i);
     return PROGRAM.workoutSchedule.includes(dayOfWeek(d));
@@ -770,10 +812,8 @@ function renderDashboard() {
   const daysLeft = Math.max(0, 84 - diff);
   document.getElementById('stat-days-left').textContent = daysLeft+' Gün';
 
-  // Bu haftanın grid'i
   const weekGrid = document.getElementById('this-week-grid');
   weekGrid.innerHTML = '';
-  // Bu haftanın Pazartesisini bul
   const todayDow = dayOfWeek(today);
   const weekStart = addDays(today, -(todayDow === 0 ? 6 : todayDow-1));
   for (let i=0;i<7;i++) {
@@ -793,7 +833,6 @@ function renderDashboard() {
     weekGrid.appendChild(dp);
   }
 
-  // Bugünün antrenmanı
   const todayWT = getWorkoutTypeForDate(today);
   const todayWorkout = todayWT ? PROGRAM.days[todayWT] : null;
   const todayCard = document.getElementById('today-workout-detail');
@@ -859,7 +898,6 @@ function renderCalendar() {
     const mc = document.createElement('div');
     mc.className = 'month-card';
 
-    // Ay başlığı
     const ms = monthStart;
     const me = monthEnd;
     mc.innerHTML = `<div class="month-title">${m+1}. Ay — ${ms.toLocaleDateString('tr-TR',{day:'numeric',month:'long'})} – ${me.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</div>`;
@@ -867,7 +905,6 @@ function renderCalendar() {
     const calGrid = document.createElement('div');
     calGrid.className = 'cal-grid';
 
-    // Haftanın isimleri
     ['Pt','Sa','Çr','Pr','Cm','Ct','Pz'].forEach(d => {
       const h = document.createElement('div');
       h.className = 'cal-head';
@@ -875,8 +912,6 @@ function renderCalendar() {
       calGrid.appendChild(h);
     });
 
-    // Bu dönemin ilk günü (4 hafta)
-    // İlk Pazartesiyi bul
     const firstDow = dayOfWeek(monthStart);
     const offset = firstDow === 0 ? 6 : firstDow-1;
     for (let i=0;i<offset;i++) {
@@ -905,7 +940,6 @@ function renderCalendar() {
 
     mc.appendChild(calGrid);
 
-    // Hafta özeti
     const weekDone = [];
     for (let w=0;w<4;w++) {
       let cnt=0,total=0;
@@ -973,13 +1007,12 @@ function renderLogPage() {
   const d = parseDate(state.currentLogDate);
   document.getElementById('log-date-display').textContent = d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
 
-  // Gün seçici
   const sel = document.getElementById('workout-day-selector');
   sel.innerHTML = '';
   [1,2,3,4].forEach((i,idx) => {
     const btn = document.createElement('button');
     btn.className = 'day-sel-btn' + (state.currentLogDay===i?' active':'');
-    btn.textContent = PROGRAM.days[i].type+' — '+PROGRAM.days[i].name;
+    btn.textContent = PROGRAM.days[i].type;
     btn.onclick = () => { state.currentLogDay = i; renderLogPage(); };
     sel.appendChild(btn);
   });
@@ -989,7 +1022,6 @@ function renderLogPage() {
 
   renderExercises(effectiveDay);
 
-  // Not
   const log = state.logs[state.currentLogDate] || {};
   document.getElementById('log-daily-note').value = log.note || '';
 }
@@ -1014,8 +1046,8 @@ function renderExercises(dayIdx) {
     <div class="ex-body open" id="ex-body-${exIdx}">
       <div class="set-labels">
         <div class="set-label">Set</div>
-        <div class="set-label">Tekrar</div>
-        <div class="set-label">Ağırlık (kg)</div>
+        <div class="set-label">Tek.</div>
+        <div class="set-label">Ağırlık</div>
         <div class="set-label">Not</div>
         <div class="set-label"></div>
       </div>
@@ -1157,14 +1189,12 @@ function renderMealTracker() {
     container.appendChild(mc);
   });
 
-  // Ring güncelle
   const pct = Math.min(1, totalKal/3200);
   const circumference = 314;
   document.getElementById('cal-ring-circle').setAttribute('stroke-dashoffset', circumference - pct*circumference);
   document.getElementById('cal-consumed').textContent = totalKal;
   document.getElementById('cal-remaining').textContent = Math.max(0,3200-totalKal)+' kcal kaldı';
 
-  // Makrolar
   document.getElementById('proto-val').textContent = totalPro+'g / 175g';
   document.getElementById('karb-val').textContent = totalKar+'g / 420g';
   document.getElementById('yag-val').textContent = totalYag+'g / 85g';
@@ -1202,7 +1232,6 @@ function renderProgress() {
   const circumference = 408;
   document.getElementById('big-ring').setAttribute('stroke-dashoffset', circumference - (overallPct/100)*circumference);
 
-  // Haftalık barlar
   const barsHTML = Array.from({length:12},(_,w)=>{
     let cnt=0, total=0;
     for(let d=0;d<7;d++){
@@ -1219,7 +1248,6 @@ function renderProgress() {
   }).join('');
   document.getElementById('week-bars-list').innerHTML = barsHTML;
 
-  // Program detay tablosu
   const tbody = document.getElementById('prog-detail-tbody');
   tbody.innerHTML = Array.from({length:12},(_,w)=>{
     let cnt=0,total=0;
@@ -1295,7 +1323,6 @@ function deleteNote(idx) {
 loadState();
 renderDashboard();
 
-// Öğün tarihi bugüne set et
 document.getElementById('meal-date-input').value = dateStr(new Date());
 </script>
 </body>
