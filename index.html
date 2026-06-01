@@ -304,6 +304,19 @@
 
   .empty-state { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
 
+  /* ── SETUP STEPS ── */
+  .setup-step {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--text2); line-height: 1.5;
+  }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent-dim); border: 1px solid var(--accent-dim2);
+    color: var(--accent); font-size: 10px; font-weight: 800;
+    flex-shrink: 0; margin-top: 1px;
+  }
+
   /* ── AI CARD ── */
   .ai-card { border-color: rgba(212,255,76,.15); }
   .ai-spinner {
@@ -562,14 +575,20 @@
           </div>
         </div>
 
-        <!-- API Key alanı -->
-        <div id="api-key-section" style="margin-bottom:12px;padding:12px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text2);margin-bottom:8px">🔑 Anthropic API Anahtarı (bir kez gir, tarayıcıda şifreli saklanır)</div>
-          <div style="display:flex;gap:8px">
-            <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;font-family:'Space Mono',monospace;font-size:12px">
-            <button class="btn btn-accent btn-sm" onclick="saveApiKey()">Kaydet</button>
+        <!-- Gemini API Key kurulum -->
+        <div id="api-key-section" style="margin-bottom:12px;padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid rgba(212,255,76,.2)">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px">🔑 Google Gemini API — Ücretsiz Kurulum</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+            <div class="setup-step"><span class="step-num">1</span><span>Google hesabınla <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:700">aistudio.google.com/apikey</a> adresine git</span></div>
+            <div class="setup-step"><span class="step-num">2</span><span><strong style="color:var(--text)">"Create API Key"</strong> butonuna tıkla</span></div>
+            <div class="setup-step"><span class="step-num">3</span><span>Oluşan anahtarı kopyala, buraya yapıştır</span></div>
+            <div class="setup-step" style="color:var(--text3);font-size:10px;padding-left:28px">✓ Tamamen ücretsiz &nbsp;·&nbsp; ✓ Kredi kartı yok &nbsp;·&nbsp; ✓ Günde 1500 istek</div>
           </div>
-          <div style="font-size:10px;color:var(--text3);margin-top:6px">API anahtarın sadece bu cihazda kalır, hiçbir yere gönderilmez.</div>
+          <div style="display:flex;gap:8px">
+            <input type="password" id="api-key-input" placeholder="AIza..." style="flex:1;font-family:'Space Mono',monospace;font-size:12px" onkeydown="if(event.key==='Enter')saveApiKey()">
+            <button class="btn btn-accent btn-sm" onclick="saveApiKey()">Bağla ✦</button>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:8px">🔒 Anahtar sadece bu cihazda kalır, internete gönderilmez.</div>
         </div>
 
         <!-- Yemek sorgu alanı -->
@@ -807,13 +826,13 @@ function loadState() {
   if (!state.extraFoods) state.extraFoods = {};
   if (!state.notes) state.notes = [];
 
-  // API key yükleme
-  const savedKey = localStorage.getItem('ekto_api_key');
+  // Gemini key yükleme
+  const savedKey = localStorage.getItem('ekto_gemini_key');
   if (savedKey) {
     document.getElementById('api-key-input').value = savedKey;
     document.getElementById('api-key-section').style.display = 'none';
     document.getElementById('ai-api-dot').style.background = 'var(--green)';
-    document.getElementById('ai-api-dot').title = 'API bağlı';
+    document.getElementById('ai-api-dot').title = 'Gemini bağlı ✓';
   }
 }
 
@@ -1397,16 +1416,16 @@ function toggleMeal(idx, s) {
 }
 
 // ═══════════════════════════════════════
-// AI KALORİ ASISTANI
+// AI KALORİ ASISTANI — Google Gemini
 // ═══════════════════════════════════════
 function saveApiKey() {
   const key = document.getElementById('api-key-input').value.trim();
-  if (!key.startsWith('sk-')) { showToast('⚠️ Geçerli bir API anahtarı gir (sk-ant-...)'); return; }
-  localStorage.setItem('ekto_api_key', key);
+  if (!key || key.length < 10) { showToast('⚠️ Geçerli bir API anahtarı gir!'); return; }
+  localStorage.setItem('ekto_gemini_key', key);
   document.getElementById('api-key-section').style.display = 'none';
   document.getElementById('ai-api-dot').style.background = 'var(--green)';
-  document.getElementById('ai-api-dot').title = 'API bağlı';
-  showToast('🔑 API anahtarı kaydedildi!');
+  document.getElementById('ai-api-dot').title = 'Gemini bağlı ✓';
+  showToast('🟢 Gemini bağlandı! Artık kullanabilirsin.');
 }
 
 function quickQuery(text) {
@@ -1415,10 +1434,11 @@ function quickQuery(text) {
 }
 
 async function askAI() {
-  const apiKey = localStorage.getItem('ekto_api_key');
+  const apiKey = localStorage.getItem('ekto_gemini_key');
   if (!apiKey) {
     document.getElementById('api-key-section').style.display = 'block';
-    showToast('⚠️ Önce API anahtarını kaydet!');
+    document.getElementById('api-key-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showToast('⚠️ Önce Gemini API anahtarını bağla!');
     return;
   }
 
@@ -1438,37 +1458,54 @@ async function askAI() {
   btn.disabled = true;
   document.getElementById('ai-btn-text').textContent = '...';
 
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 400,
-        system: `Sen bir Türk spor beslenmesi uzmanısın. Kullanıcı ne yediğini söyleyecek, sen JSON formatında sadece şunu döndüreceksin (başka hiçbir şey yazma, sadece JSON):
-{"name":"<ne yendi, kısa>","kal":<toplam kalori sayı>,"pro":<protein gram sayı>,"kar":<karbonhidrat gram sayı>,"yag":<yag gram sayı>,"aciklama":"<1-2 cümle kısa bilgi Türkçe>"}
+  const prompt = `Sen bir Türk spor beslenmesi uzmanısın. Kullanıcı ne yediğini söyleyecek.
+Sadece ve sadece şu JSON formatında cevap ver, başka hiçbir şey yazma:
+{"name":"<ne yendi kısa>","kal":<toplam kalori tam sayı>,"pro":<protein gram tam sayı>,"kar":<karbonhidrat gram tam sayı>,"yag":<yag gram tam sayı>,"aciklama":"<1 cümle Türkçe kısa bilgi>"}
 
-Türk yemekleri için doğru gramaj ve pişirme yöntemi dikkate alarak gerçekçi tahmin yap. Sadece JSON döndür.`,
-        messages: [{ role: 'user', content: query }]
-      })
-    });
+Türk yemekleri için standart porsiyonları ve pişirme yöntemini dikkate al. Gerçekçi tahmin yap.
+Kullanıcı: "${query}"`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1, maxOutputTokens: 300 }
+        })
+      }
+    );
 
     if (!response.ok) {
       const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || 'API hatası: '+response.status);
+      const msg = err.error?.message || '';
+      if (response.status === 400 && msg.includes('API_KEY')) throw new Error('API anahtarı geçersiz. Tekrar kontrol et.');
+      if (response.status === 429) throw new Error('Günlük limit doldu. Yarın tekrar dene (ücretsiz 1500/gün).');
+      throw new Error('Hata ' + response.status + ': ' + (msg || 'Bilinmeyen hata'));
     }
 
     const data = await response.json();
-    const raw = data.content?.[0]?.text || '';
-    const jsonStr = raw.replace(/```json|```/g,'').trim();
-    const food = JSON.parse(jsonStr);
+    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const jsonStr = raw.replace(/```json|```/g, '').trim();
 
-    pendingAIFood = { name: food.name || query, kal: Number(food.kal)||0, pro: Number(food.pro)||0, kar: Number(food.kar)||0, yag: Number(food.yag)||0 };
+    let food;
+    try { food = JSON.parse(jsonStr); }
+    catch(e) {
+      // JSON parse başarısız — regex ile dene
+      const m = jsonStr.match(/\{[\s\S]*\}/);
+      if (m) food = JSON.parse(m[0]);
+      else throw new Error('AI cevabı işlenemedi. Tekrar dene.');
+    }
+
+    pendingAIFood = {
+      name: food.name || query,
+      kal: Math.round(Number(food.kal) || 0),
+      pro: Math.round(Number(food.pro) || 0),
+      kar: Math.round(Number(food.kar) || 0),
+      yag: Math.round(Number(food.yag) || 0)
+    };
 
     document.getElementById('ai-result-summary').textContent = food.aciklama || '';
     document.getElementById('ai-result-macros').innerHTML = `
@@ -1484,11 +1521,21 @@ Türk yemekleri için doğru gramaj ve pişirme yöntemi dikkate alarak gerçek�
   } catch(e) {
     loading.style.display = 'none';
     errorDiv.style.display = 'block';
-    errorDiv.textContent = '⚠️ ' + (e.message || 'Bilinmeyen hata. API anahtarını kontrol et.');
+    errorDiv.innerHTML = '⚠️ ' + (e.message || 'Bilinmeyen hata.') +
+      '<br><span style="font-size:10px;opacity:.7;margin-top:4px;display:block">API anahtarını sıfırlamak için: <button onclick="resetApiKey()" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:10px;text-decoration:underline">Anahtarı sil</button></span>';
   }
 
   btn.disabled = false;
   document.getElementById('ai-btn-text').textContent = 'Hesapla ✦';
+}
+
+function resetApiKey() {
+  localStorage.removeItem('ekto_gemini_key');
+  document.getElementById('api-key-section').style.display = 'block';
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('ai-api-dot').style.background = 'var(--text3)';
+  clearAIResult();
+  showToast('🔑 Anahtar silindi, yenisini gir.');
 }
 
 function addAIFoodToDay() {
